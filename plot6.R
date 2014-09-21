@@ -10,10 +10,11 @@ if (!file.exists('data/exdata-data-NEI_data.zip')) {
 pmEmissionsData <- readRDS('data/summarySCC_PM25.rds')
 sourceClassificationCode <- readRDS('data/Source_Classification_Code.rds')
 
-sources <- sourceClassificationCode[grepl("Coal", sourceClassificationCode$EI.Sector),]
+sources <- sourceClassificationCode[grepl("On-Road", sourceClassificationCode$EI.Sector),]
 sources <- sources$SCC
 data <- pmEmissionsData[pmEmissionsData$SCC %in% sources,]
-data <- aggregate(Emissions ~ year, data=data, sum)
+data <- pmEmissionsData[pmEmissionsData$fips %in% c("24510", "06037"),]
+data <- aggregate(Emissions ~ year + fips, data=data, sum)
 
-plot <- qplot(year, Emissions, data=data, geom="path", main="Emissions From Coal Combustion-Related Sources in USA", xlab="Year", ylab="Emissions")
-ggsave(plot, file="plot4.png", width=7, height=5)
+plot <- qplot(year, Emissions, color=fips, data=data, geom="path", main="Emissions From Vehicle Related Sources in Baltimore and Los Angeles County", xlab="Year", ylab="Emissions")
+ggsave(plot, file="plot6.png", width=10, height=5)
