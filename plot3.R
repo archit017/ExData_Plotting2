@@ -1,3 +1,5 @@
+library(ggplot2)
+
 url <- 'http://d396qusza40orc.cloudfront.net/exdata%2Fdata%2FNEI_data.zip'
 
 if (!file.exists('data/exdata-data-NEI_data.zip')) {
@@ -9,8 +11,7 @@ pmEmissionsData <- readRDS('data/summarySCC_PM25.rds')
 sourceClassificationCode <- readRDS('data/Source_Classification_Code.rds')
 
 data <- pmEmissionsData[pmEmissionsData$fips == "24510",]
-data <- aggregate(Emissions ~ year, data=data, sum)
+data <- aggregate(Emissions ~ year + type, data=data, sum)
 
-png('plot2.png', width = 480, height = 480)                                                                              
-plot(data$year, data$Emissions, type="b", main="Total Emissions Per Year in Baltimore", xlab="Year", ylab="Total Emissions")
-dev.off()
+plot3 <- qplot(year, Emissions, data=data, color=type, geom="path", main="Emissions By Type In Baltimor", xlab="Year", ylab="Emissions")
+ggsave(plot3, file="plot3.png", width=5, height=5)
