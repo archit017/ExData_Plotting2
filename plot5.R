@@ -10,8 +10,11 @@ if (!file.exists('data/exdata-data-NEI_data.zip')) {
 pmEmissionsData <- readRDS('data/summarySCC_PM25.rds')
 sourceClassificationCode <- readRDS('data/Source_Classification_Code.rds')
 
+sources <- sourceClassificationCode[grepl("On-Road", sourceClassificationCode$EI.Sector),]
+sources <- sources$SCC
+data <- pmEmissionsData[pmEmissionsData$SCC %in% sources,]
 data <- pmEmissionsData[pmEmissionsData$fips == "24510",]
-data <- aggregate(Emissions ~ year + type, data=data, sum)
+data <- aggregate(Emissions ~ year, data=data, sum)
 
-plot <- qplot(year, Emissions, data=data, color=type, geom="path", main="Emissions By Type In Baltimor", xlab="Year", ylab="Emissions")
-ggsave(plot, file="plot3.png", width=6, height=5)
+plot <- qplot(year, Emissions, data=data, geom="path", main="Emissions From Vehicle Related Sources in Baltimore", xlab="Year", ylab="Emissions")
+ggsave(plot, file="plot5.png", width=6, height=5)
